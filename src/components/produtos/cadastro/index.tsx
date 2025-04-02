@@ -13,9 +13,11 @@ export const CadastroProdutos: React.FC = () => {
     const [ preco, setPreco ] = useState<string>('')
     const [ nome, setNome ] = useState<string>('')
     const [ descricao, setDescricao ] = useState<string>('')
+    const [ id, setId] = useState<string>('')
+    const [cadastro, setCadastro] = useState<string>('')
     
     const submit = () => {
-        const produto: Produto= {
+        const produto: Produto = {
             sku, 
             preco: parseFloat(preco), 
             nome, 
@@ -23,11 +25,33 @@ export const CadastroProdutos: React.FC = () => {
         }
         service
         .salvar(produto)
-        .then(produtoReposta => console.log(produtoReposta))
+        .then(produtoReposta => {
+            setId(produtoReposta.id ?? '')
+            setCadastro(produtoReposta.cadastro ?? '')
+        })
     } 
 
     return (
         <Layout titulo="Produtos">
+            {id &&
+                <div className='columns'>
+                    <Input label='Código:' 
+                        columnsClasses='is-half' 
+                        value={id}
+                        id='inputId'
+                        disabled={true}
+                        />
+
+                    <Input label='Data Cadastro:' 
+                        columnsClasses='is-half' 
+                        value={cadastro}
+                        id='inputDataCadastro'
+                        disabled={true}
+                        />
+                </div>
+            }
+            
+
             <div className='columns'>
                 <Input label='SKU: *' 
                        columnsClasses='is-half' 
