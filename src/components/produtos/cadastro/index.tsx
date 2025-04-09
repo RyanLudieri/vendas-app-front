@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Layout, Input } from 'components'
 import {useProdutoService} from 'app/services'
 import {Produto} from 'app/models/produtos'
+import { converterEmBigDecimal } from 'app/util/money'
 
 
 export const CadastroProdutos: React.FC = () => {
@@ -20,7 +21,7 @@ export const CadastroProdutos: React.FC = () => {
         const produto: Produto = {
             id,
             sku, 
-            preco: parseFloat(preco), 
+            preco: converterEmBigDecimal(preco), 
             nome, 
             descricao
         }
@@ -36,8 +37,8 @@ export const CadastroProdutos: React.FC = () => {
             service
                 .salvar(produto)
                 .then(produtoReposta => {
-                setId(produtoReposta.id ?? '')
-                setCadastro(produtoReposta.cadastro ?? '')
+                    setId(produtoReposta.id ?? '')
+                    setCadastro(produtoReposta.cadastro ?? '')
                 })
         }
 
@@ -49,14 +50,14 @@ export const CadastroProdutos: React.FC = () => {
             {id &&
                 <div className='columns'>
                     <Input label='Código:' 
-                        columnsClasses='is-half' 
+                        columnClasses='is-half' 
                         value={id}
                         id='inputId'
                         disabled={true}
                         />
 
                     <Input label='Data Cadastro:' 
-                        columnsClasses='is-half' 
+                        columnClasses='is-half' 
                         value={cadastro}
                         id='inputDataCadastro'
                         disabled={true}
@@ -67,7 +68,7 @@ export const CadastroProdutos: React.FC = () => {
 
             <div className='columns'>
                 <Input label='SKU: *' 
-                       columnsClasses='is-half' 
+                       columnClasses='is-half' 
                        onValueChange={setSku}
                        value={sku}
                        id='inputSku'
@@ -75,17 +76,19 @@ export const CadastroProdutos: React.FC = () => {
                         />
 
                 <Input label='Preço: *' 
-                       columnsClasses='is-half' 
+                       columnClasses='is-half' 
                        onValueChange={setPreco}
                        value={preco}
                        id='inputPreco'
                        placeholder='Digite o Preço do produto'
+                       currency
+                       maxLength={16}
                         />
             </div>
 
             <div className='columns'>
                 <Input label='Nome: *' 
-                       columnsClasses='is-full' 
+                       columnClasses='is-full' 
                        onValueChange={setNome}
                        value={nome}
                        id='inputNome'

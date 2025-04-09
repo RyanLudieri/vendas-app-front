@@ -1,35 +1,53 @@
-import { InputHTMLAttributes, ChangeEvent } from 'react'
+import React, { InputHTMLAttributes, ChangeEvent } from 'react';
+import { formatReal } from 'app/util/money';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement>{
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     id: string;
-    onValueChange?: (value: string) => void;
     label: string;
-    columnsClasses?: string; 
+    columnClasses?: string;
+    currency?: boolean;
+
+    /**
+     * Callback com o valor já formatado.
+     */
+    onValueChange?: (value: string) => void;
 }
 
 export const Input: React.FC<InputProps> = ({
     onValueChange,
-    label, 
-    columnsClasses,
+    label,
+    columnClasses = '',
     id,
+    currency = false,
     ...inputProps
-}: InputProps) => {
+}) => {
+    const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        let value = event.target.value;
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        if (onValueChange) {
-          onValueChange(event.target.value); // Passa o valor da input como string
+        if (value && currency) {
+            value = formatReal(value);
         }
-      };
 
-    return(
-        <div className={`field column ${columnsClasses}`}>
+        if (onValueChange) {
+            onValueChange(value); // string formatada
+        }
+
+        if (inputProps.onChange) {
+            inputProps.onChange(event); // evento original
+        }
+    };
+
+    return (
+        <div className={`field column ${columnClasses}`}>
             <label className="label" htmlFor={id}>{label}</label>
             <div className="control">
-                <input className='input' 
-                   id={id} {... inputProps}
-                   onChange={handleChange}
+                <input
+                    className="input"
+                    id={id}
+                    {...inputProps}
+                    onChange={onInputChange}
                 />
             </div>
         </div>
-    )
-}
+    );
+};
